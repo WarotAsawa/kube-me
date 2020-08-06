@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dply-my-app
+  namespace: my-ns
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:1.14.2
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: NAME
+        - value: "Test"
+        ports:
+        - name: www-http
+          containerPort: 80
+          protocol: UDP, TCP
+        - name: www-https
+          containerPort: 443
+          protocol: UDP, TCP
