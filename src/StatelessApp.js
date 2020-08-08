@@ -1,12 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Container from 'react-bootstrap/Container';
-import Tab from 'react-bootstrap/Tab';
-import './SizerMenu.css';
+import { Row } from 'react-bootstrap';
+import StatelessAppForm from './StatelessAppForm';
 
 function StatelessApp() {
   return(
     <Container>
-
+      <Row className="my-5 mx-5">
+        <h3 class="display-4">STATELESS APPLICATION</h3>
+        <p class="lead">Simply imput your application spec such as container image, endpoint, and this tool will generate deployment.yaml and service.yaml for you.</p>
+      </Row>
+      <Row className="my-5 mx-5">
+        <StatelessAppForm></StatelessAppForm>
+      </Row>
     </Container>
   );
 }

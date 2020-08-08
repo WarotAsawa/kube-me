@@ -1,7 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import './SizerMenu.css';
+import './StatelessApp';
+import StatelessApp from './StatelessApp';
+import StatefulApp from './StatelfulApp';
 
 function SizerMenu() {
   return(
@@ -12,10 +15,10 @@ function SizerMenu() {
 //      onSelect={key => this.setState({ key })}
     bg = "dark" >
       <Tab eventKey="stateless" title="STATELESS APPLICATION">
-        STATELESS APPLICATION content
+        <StatelessApp></StatelessApp>
       </Tab>
       <Tab eventKey="stateful" title="STATEFUL APPLICATION">
-        STATEFUL APPLICATION content
+        <StatefulApp></StatefulApp>
       </Tab>
     </Tabs>
   );

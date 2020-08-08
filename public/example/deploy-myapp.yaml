@@ -27,7 +27,7 @@ spec:
             cpu: "500m"
         env:
         - name: NAME
-        - value: "Test"
+          value: "Test"
         ports:
         - name: www-http
           containerPort: 80
