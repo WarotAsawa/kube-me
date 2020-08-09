@@ -26,15 +26,15 @@ Since **KUBE-ME** is a NodeJS Application, so you can use this command to run.
 
 ## Using KUBE-ME
 
-**KUBE-ME** use HTTPs on port **3000**. Just open your browser and go to these URLs.
+**KUBE-ME** use HTTP on port **3000**. Just open your browser and go to these URLs.
 
 **Local Host**:
 
-    https://localhost:3000
+    http://localhost:3000
 
 **Server:**
 
-    https://<Server's IP Address>:3000
+    http://<Server's IP Address>:3000
 
 
 
