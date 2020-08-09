@@ -15,29 +15,29 @@ function StatelessAppResult(props) {
 
   return(
 		<Row>
-    	<Col>
-      	<Row><h3>Deployment yaml output</h3></Row>
+    		<Col>
+      			<Row><h3>Deployment yaml output</h3></Row>
 				<Row className='pr-2'>
 					<Card boarder='secondary' className='mb-2 w-100 h-100'>
-    				<Card.Header className='bg-secondary'>{deployFileName}.yaml</Card.Header>
-    				<Card.Body>
-      				<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
-							{deployYaml.split("\n").map((i,key) => {
-            		return <div key={key}>{i}</div>;
-        			})}
-      				</Card.Text>
-    				</Card.Body>
-  				</Card>
+    					<Card.Header className='bg-secondary'>{deployFileName}.yaml</Card.Header>
+    					<Card.Body>
+     							<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
+								{deployYaml.split("\n").map((i,key) => {
+           							return <div key={key}>{i}</div>;
+       							})}
+     							</Card.Text>
+    					</Card.Body>
+  					</Card> 
 				</Row>
 				<Row>
-				<Button 
+					<Button 
 						className='float-left'
 						onClick={() => {
 							navigator.clipboard.writeText(deployYaml);
 							alert(deployFileName+'.yaml has been copied to clipboard.');}
 						} 
 						variant="info">
-							Copy to Clipboard
+						Copy to Clipboard
 					</Button>{' '}
 					<Button
 						className='float-right'
@@ -45,10 +45,10 @@ function StatelessAppResult(props) {
 							DownloadString(deployYaml,"text",deployFileName+".yaml")}
 						} 
 						variant="success">
-							Download .yaml file
+						Download .yaml file
 					</Button>{' '}
 				</Row>
-    	</Col>
+			</Col>
 			<Col>
 				<Row><h3>Service yaml output</h3></Row>
 				<Row className='pr-2'>

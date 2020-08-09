@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Button } from 'react-bootstrap';
+import { Row, Col, Card, CardGroup, Button } from 'react-bootstrap';
 import { DownloadString } from './DownloadString';
 
 let statefulYaml = "";
@@ -8,6 +8,7 @@ let serviceYaml = "";
 let serviceFileName = "";
 
 function StatefulAppResult(props) {
+
 	statefulYaml = GenerateStatefulSetYAML(props.app);
 	serviceYaml = GenerateServiceYAML(props.app);
 	statefulFileName = 'ss-'+props.app.name;
@@ -16,21 +17,21 @@ function StatefulAppResult(props) {
 	return(
 		<Row>
 			<Col>
-      	<Row><h3>StatefulSet yaml output</h3></Row>
-				<Row className='pr-2'>
-					<Card boarder='secondary' className='mb-2 w-100 h-100'>
-    				<Card.Header className='bg-secondary'>{statefulFileName}.yaml</Card.Header>
-    				<Card.Body>
-      				<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
+      			<Row><h3>StatefulSet yaml output</h3></Row>
+					<Row className='pr-2'>
+						<Card boarder='secondary' className='mb-2 w-100 h-100'>
+    					<Card.Header className='bg-secondary'>{statefulFileName}.yaml</Card.Header>
+    					<Card.Body>
+      						<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
 							{statefulYaml.split("\n").map((i,key) => {
-            		return <div key={key}>{i}</div>;
-        			})}
-      				</Card.Text>
-    				</Card.Body>
-  				</Card>
-				</Row>
+            					return <div key={key}>{i}</div>;
+        					})}
+      						</Card.Text>
+    					</Card.Body>
+  					</Card>
+					</Row>
 				<Row>
-				<Button 
+					<Button 
 						className='float-left'
 						onClick={() => {
 							navigator.clipboard.writeText(statefulYaml);
@@ -48,18 +49,18 @@ function StatefulAppResult(props) {
 							Download .yaml file
 					</Button>{' '}
 				</Row>
-    	</Col>
+    		</Col>
 			<Col>
 				<Row><h3>Headless Service yaml output</h3></Row>
 				<Row className='pr-2'>
 					<Card boarder='info' className='mb-2 w-100 h-100'>
 						<Card.Header className='bg-info'>{serviceFileName}.yaml</Card.Header>
 						<Card.Body>
-						<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
-							{serviceYaml.split("\n").map((i,key) => {
-            		return <div key={key}>{i}</div>;
-        			})}
-      				</Card.Text>
+							<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
+								{serviceYaml.split("\n").map((i,key) => {
+            					return <div key={key}>{i}</div>;
+        						})}
+      						</Card.Text>
 						</Card.Body>
 					</Card>
 				</Row>
@@ -83,8 +84,8 @@ function StatefulAppResult(props) {
 					</Button>{' '}
 				</Row>
 			</Col>
-	</Row>
-  );
+		</Row>
+  	);
 }
 
 function GenerateStatefulSetYAML(data) {
