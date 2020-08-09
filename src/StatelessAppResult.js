@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, Button } from 'react-bootstrap';
 import { DownloadString } from './DownloadString';
+import { CopyToClipBoard } from './CopyToClipBoard';
 
 let deployYaml = "";
 let deployFileName = "";
@@ -33,7 +34,7 @@ function StatelessAppResult(props) {
 					<Button 
 						className='float-left'
 						onClick={() => {
-							navigator.clipboard.writeText(deployYaml);
+							CopyToClipBoard(deployYaml);
 							alert(deployFileName+'.yaml has been copied to clipboard.');}
 						} 
 						variant="info">
@@ -67,7 +68,7 @@ function StatelessAppResult(props) {
 					<Button 
 						className='float-left'
 						onClick={() => {
-							navigator.clipboard.writeText(serviceYaml);
+							CopyToClipBoard(serviceYaml);
 							alert(serviceFileName+'.yaml has been copied to clipboard.');}
 						} 
 						variant="info">
