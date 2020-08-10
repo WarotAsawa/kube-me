@@ -22,11 +22,9 @@ function StatelessAppResult(props) {
 					<Card boarder='secondary' className='mb-2 w-100 h-100'>
     					<Card.Header className='bg-secondary'>{deployFileName}.yaml</Card.Header>
     					<Card.Body>
-     							<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
-								{deployYaml.split("\n").map((i,key) => {
-           							return <div key={key}>{i}</div>;
-       							})}
-     							</Card.Text>
+							<Card.Text style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
+								{deployYaml}
+     						</Card.Text>
     					</Card.Body>
   					</Card> 
 				</Row>
@@ -41,7 +39,7 @@ function StatelessAppResult(props) {
 						Copy to Clipboard
 					</Button>{' '}
 					<Button
-						className='float-right'
+						className='ml-2'
 						onClick={() => {
 							DownloadString(deployYaml,"text",deployFileName+".yaml")}
 						} 
@@ -56,11 +54,9 @@ function StatelessAppResult(props) {
 					<Card boarder='info' className='mb-2 w-100 h-100'>
 						<Card.Header className='bg-info'>{serviceFileName}.yaml</Card.Header>
 						<Card.Body>
-						<Card.Text style={{"white-space": "pre", "font-family":"consolas", "line-height":"1.5"}}>
-							{serviceYaml.split("\n").map((i,key) => {
-            		return <div key={key}>{i}</div>;
-        			})}
-      				</Card.Text>
+							<Card.Text style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
+								{serviceYaml}
+      						</Card.Text>
 						</Card.Body>
 					</Card>
 				</Row>
@@ -75,7 +71,7 @@ function StatelessAppResult(props) {
 							Copy to Clipboard
 					</Button>{' '}
 					<Button
-						className='float-right'
+						className='ml-2'
 						onClick={() => {
 							DownloadString(serviceYaml,"text",serviceFileName+".yaml")}
 						} 
@@ -156,13 +152,12 @@ function GenerateServiceYAML(data) {
 	if (data.ports.length > 0) {
 		output.spec.ports = [];
 		for (let i = 0; i < data.ports.length; i++) {
-			if (data.ports[i].expose == 'true') {
+			if (data.ports[i].expose === 'true') {
 				output.spec.ports.push({"name":data.ports[i].name, "protocol":data.ports[i].protocol, "port":parseInt(data.ports[i].number,10),"targetPort":parseInt(data.ports[i].number,10)});
 			}
 		}
 	}
 	const result = yaml.dump(output);
-	console.log(result);
 	return result;
 }
 

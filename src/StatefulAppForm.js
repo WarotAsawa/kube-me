@@ -57,7 +57,7 @@ function StatefulAppForm() {
 				}}	
 			>
 			{({ values }) => (
-				<Form inline>
+				<Form inline="true">
 					<Row className='my-1'>
 						<h5 className='w-25'>Name:</h5>
 						<Field className='w-75' name="application.name" />
@@ -328,7 +328,7 @@ function StatefulAppForm() {
 							</div>
 						)}
 					</FieldArray>
-					<button type="submit" class="btn btn-secondary my-5">KUBE NOW !</button>
+					<button type="submit" className="btn btn-secondary my-5">KUBE NOW !</button>
 				</Form>
 			)}
 			</Formik>
