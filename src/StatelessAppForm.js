@@ -179,7 +179,6 @@ function StatelessAppForm() {
           				</label>
 					</Row>
 					<Row ><h5>Ports:</h5></Row>
-					<Row ><h5>Ports:</h5></Row>
 					<FieldArray name="ports">
 						{({ insert, remove, push }) => (
 							<div>
