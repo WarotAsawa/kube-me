@@ -25,7 +25,7 @@ spec:
               cpu: 400m
               memory: 512Mi
           ports:
-            - name: http-dev-kube-me
+            - name: http-kube-me-ci
               containerPort: 3000
               protocol: TCP
 

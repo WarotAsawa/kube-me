@@ -9,7 +9,7 @@ spec:
   selector:
     app: kube-me-dev
   ports:
-    - name: http-dev-kube-me
+    - name: http-kube-me-ci
       nodePort: 30555
       protocol: TCP
       port: 3000
