@@ -10,7 +10,12 @@ pipeline {
 
 	//Run only on dev-node slave
 	agent { label 'dev-node'}
-
+	parameters {
+		string(name: 'TEST_PORT', defaultValue: '30000', description: 'Port for testing')
+		string(name: 'PROD_PORT', defaultValue: '30555', description: 'Port for production')
+		string(name: 'TEST_URL', defaultValue: 'http://localhost', description: 'URL for docker testing')
+		string(name: 'PROD_URL', defaultValue: 'http://k8s-7.ezmeral.hpe.lab', description: 'URL for docker testing')
+	}
 	stages {
 		stage('Prepare Test') {
 			steps {
@@ -27,7 +32,7 @@ pipeline {
 			steps {
 				dir('/root/kube-me') {
 					echo "Building temp docker image"
-					sh "docker build -t temp-kube-me:latest ."
+					sh "docker build -t temp-kube-me:dev ."
 				}
 			}
 		}
@@ -35,11 +40,11 @@ pipeline {
 			steps {
 				dir('/root/kube-me') {
 					echo "Running temp docker image with port 30000"
-					sh "docker run --name tempweb -d -p 30000:3000 temp-kube-me:latest"
+					sh "docker run --name tempweb -d -p ${params.TEST_URL}:${params.TEST_PORT} temp-kube-me:dev"
 					retry(3) {
 						sleep(time: 15, unit: "SECONDS")
 						echo "Test web connectivity"
-						sh "curl -I localhost:8888"
+						sh "curl -I ${params.TEST_URL}:${params.TEST_PORT}"
 					}
 					echo "Test Pass. Cleaning up containers"
 					sh "docker stop tempweb"
@@ -81,7 +86,7 @@ pipeline {
 				retry(3) {
 					sleep(time: 5, unit: "SECONDS")
 					echo "Test web connectivity"
-					sh "curl -I http://nanju-hcp-gw.hpe.lab:10031/"
+					sh "curl -I ${params.PROD_URL}:${params.PROD_PORT}"
 				}
 				echo "Test Pass. All Done"
 			}
