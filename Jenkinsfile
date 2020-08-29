@@ -40,7 +40,7 @@ pipeline {
 			steps {
 				dir('/root/kube-me') {
 					echo "Running temp docker image with port 30000"
-					sh "docker run --name tempweb -d -p ${params.TEST_URL}:${params.TEST_PORT} temp-kube-me:dev"
+					sh "docker run --name tempweb -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev"
 					retry(3) {
 						sleep(time: 15, unit: "SECONDS")
 						echo "Test web connectivity"
