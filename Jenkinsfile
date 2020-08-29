@@ -9,7 +9,7 @@ pipeline {
 	*/
 
 	//Run only on dev-node slave
-	agent { label 'dev-node'}
+	agent { label 'gotham-ci'}
 	parameters {
 		string(name: 'TEST_PORT', defaultValue: '30000', description: 'Port for testing')
 		string(name: 'PROD_PORT', defaultValue: '30555', description: 'Port for production')
