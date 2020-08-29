@@ -84,7 +84,7 @@ pipeline {
 		stage('Verify deployment') {
 			steps {
 				retry(3) {
-					sleep(time: 5, unit: "SECONDS")
+					sleep(time: 15, unit: "SECONDS")
 					echo "Test web connectivity"
 					sh "curl -I ${params.PROD_URL}:${params.PROD_PORT}"
 				}
