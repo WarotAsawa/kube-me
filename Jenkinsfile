@@ -46,7 +46,7 @@ pipeline {
 					retry(3) {
 						sleep(time: 10, unit: "SECONDS")
 						echo "Test web connectivity"
-						sh "docker exec -it tempweb npm test"
+						sh "docker exec -i tempweb npm test"
 					}
 					echo "Test Pass. Cleaning up containers"
 					sh "docker stop tempweb"
