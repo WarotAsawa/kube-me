@@ -7,7 +7,6 @@ import * as Yup from 'yup';
 const nameRegex = /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]+$/;
 const cpuRegex = /^([0-9]{1,5})[m]?$/;
 const capacityRegex = /^([0-9]{1,9})([EPTGMK]?[i]?)$/;
-const dirRegex = /^\/(([a-zA-Z0-9_-]+)\/?)+$/;
 
 const ApplicationSpecSchema = Yup.object().shape({
 	name: Yup.string()
@@ -221,6 +220,7 @@ function StatelessAppForm() {
 											</div>
 											<div className="col">
 												<button
+													name={`ports.${index}.removePort`}
 													type="button"
 													className="btn btn-secondary"
 													onClick={() => remove(index)}
@@ -232,6 +232,7 @@ function StatelessAppForm() {
 									))}
 								<div className='row'>
 									<button
+										name='addPort'
 										type="button"
 										className="btn btn-primary float-right mt-1"
 										onClick={() => push({name: 'web', number: '80', protocol: 'TCP', expose: 'true'})}
@@ -242,7 +243,7 @@ function StatelessAppForm() {
 							</div>
 						)}
 					</FieldArray>
-					<button type="submit" className="btn btn-secondary my-5">KUBE NOW !</button>
+					<button name="submitStateless" type="submit" className="btn btn-secondary my-5">KUBE NOW !</button>
 				</Form>
 			)}
 			</Formik>

@@ -22,7 +22,7 @@ function StatelessAppResult(props) {
 					<Card boarder='secondary' className='mb-2 w-100 h-100'>
     					<Card.Header className='bg-secondary'>{deployFileName}.yaml</Card.Header>
     					<Card.Body>
-							<Card.Text style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
+							<Card.Text name="deploymentYaml" style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
 								{deployYaml}
      						</Card.Text>
     					</Card.Body>
@@ -30,6 +30,7 @@ function StatelessAppResult(props) {
 				</Row>
 				<Row>
 					<Button 
+						name="copyDeployment"
 						className='float-left'
 						onClick={() => {
 							CopyToClipBoard(deployYaml);
@@ -39,6 +40,7 @@ function StatelessAppResult(props) {
 						Copy to Clipboard
 					</Button>{' '}
 					<Button
+						name="downloadDeployment"
 						className='ml-2'
 						onClick={() => {
 							DownloadString(deployYaml,"text",deployFileName+".yaml")}
@@ -54,14 +56,15 @@ function StatelessAppResult(props) {
 					<Card boarder='info' className='mb-2 w-100 h-100'>
 						<Card.Header className='bg-info'>{serviceFileName}.yaml</Card.Header>
 						<Card.Body>
-							<Card.Text style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
+							<Card.Text name="serviceYaml" style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
 								{serviceYaml}
       						</Card.Text>
 						</Card.Body>
 					</Card>
 				</Row>
 				<Row>
-					<Button 
+					<Button
+						name="copyService"
 						className='float-left'
 						onClick={() => {
 							CopyToClipBoard(serviceYaml);
@@ -71,6 +74,7 @@ function StatelessAppResult(props) {
 							Copy to Clipboard
 					</Button>{' '}
 					<Button
+						name="downloadService"
 						className='ml-2'
 						onClick={() => {
 							DownloadString(serviceYaml,"text",serviceFileName+".yaml")}

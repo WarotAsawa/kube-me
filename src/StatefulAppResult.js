@@ -22,7 +22,7 @@ function StatefulAppResult(props) {
 						<Card boarder='secondary' className='mb-2 w-100 h-100'>
     					<Card.Header className='bg-secondary'>{statefulFileName}.yaml</Card.Header>
     					<Card.Body>
-      						<Card.Text style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
+      						<Card.Text name="statefulYaml" style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
 								{statefulYaml}
       						</Card.Text>
     					</Card.Body>
@@ -30,6 +30,7 @@ function StatefulAppResult(props) {
 					</Row>
 				<Row>
 					<Button 
+						name="copyStateful"
 						className='float-left'
 						onClick={() => {
 							CopyToClipBoard(statefulYaml);
@@ -39,6 +40,7 @@ function StatefulAppResult(props) {
 							Copy to Clipboard
 					</Button>{' '}
 					<Button
+						name="downloadStateful"
 						className='ml-2'
 						onClick={() => {
 							DownloadString(statefulYaml,"text",statefulFileName+".yaml")}
@@ -54,7 +56,7 @@ function StatefulAppResult(props) {
 					<Card boarder='info' className='mb-2 w-100 h-100'>
 						<Card.Header className='bg-info'>{serviceFileName}.yaml</Card.Header>
 						<Card.Body>
-							<Card.Text style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
+							<Card.Text name="headlessYaml" style={{"whiteSpace": "pre", "fontFamily":"consolas", "lineHeight":"1.5"}}>
 								{serviceYaml}
       						</Card.Text>
 						</Card.Body>
@@ -62,6 +64,7 @@ function StatefulAppResult(props) {
 				</Row>
 				<Row>
 					<Button 
+						name="copyHeadless"
 						className='float-left'
 						onClick={() => {
 							CopyToClipBoard(serviceYaml);
@@ -71,6 +74,7 @@ function StatefulAppResult(props) {
 							Copy to Clipboard
 					</Button>{' '}
 					<Button
+						name="downloadHeadless"
 						className='ml-2'
 						onClick={() => {
 							DownloadString(serviceYaml,"text",serviceFileName+".yaml")}
@@ -155,7 +159,6 @@ function GenerateStatefulSetYAML(data) {
 function GenerateServiceYAML(data) {
 	const yaml = require('js-yaml');
 	let output = {};
-	let container = {};
 	output.apiVersion = "v1";
 	output.kind = "Service";
 	output.metadata = {};

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
-import { Row, Col } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
 import StatefulAppResult from './StatefulAppResult';
 import * as Yup from 'yup';
 
@@ -285,6 +285,7 @@ function StatefulAppForm() {
 											</div>
 											<div className="col">
 												<button
+													name={`ports.${index}.removePort`}
 													type="button"
 													className="btn btn-secondary"
 													onClick={() => remove(index)}
@@ -296,6 +297,7 @@ function StatefulAppForm() {
 									))}
 								<div className='row'>
 									<button
+										name='addPort'
 										type="button"
 										className="btn btn-primary float-right mt-1"
 										onClick={() => push({name: 'web', number: '80', protocol: 'TCP', expose: 'true'})}
@@ -306,7 +308,7 @@ function StatefulAppForm() {
 							</div>
 						)}
 					</FieldArray>
-					<button type="submit" className="btn btn-secondary my-5">KUBE NOW !</button>
+					<button name="submitStateful" type="submit" className="btn btn-secondary my-5">KUBE NOW !</button>
 				</Form>
 			)}
 			</Formik>
