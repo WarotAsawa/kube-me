@@ -11,7 +11,7 @@ pipeline {
 	//Run only on dev-node slave
 	agent { label 'gotham-ci'}
 	parameters {
-		string(name: 'TEST_PORT', defaultValue: '30000', description: 'Port for testing')
+		string(name: 'TEST_PORT', defaultValue: '3000', description: 'Port for testing')
 		string(name: 'PROD_PORT', defaultValue: '30555', description: 'Port for production')
 		string(name: 'TEST_URL', defaultValue: 'http://localhost', description: 'URL for docker testing')
 		string(name: 'PROD_URL', defaultValue: 'http://k8s-7.ezmeral.hpe.lab', description: 'URL for docker testing')
@@ -39,12 +39,14 @@ pipeline {
 		stage('Run Test') {
 			steps {
 				dir('/root/kube-me') {
-					echo "Running temp docker image with port 30000"
+					echo "Running temp docker image with port 3000"
 					sh "docker run --name tempweb -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev"
+					echo "Waiting for NodeJS Service to be Ready"
+					sleep(time: 30, unit: "SECONDS")
 					retry(3) {
-						sleep(time: 15, unit: "SECONDS")
+						sleep(time: 10, unit: "SECONDS")
 						echo "Test web connectivity"
-						sh "curl -I ${params.TEST_URL}:${params.TEST_PORT}"
+						sh "docker exec -it tempweb npm test"
 					}
 					echo "Test Pass. Cleaning up containers"
 					sh "docker stop tempweb"

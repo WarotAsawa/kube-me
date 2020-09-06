@@ -108,8 +108,6 @@ function StatefulAppForm() {
 			>
 			{({ values , errors , touched}) => (
 				<Form inline="true">
-					{JSON.stringify(errors)}
-					{JSON.stringify(touched)}
 					<Row className='my-1'>
 						<h5 className='w-25 my-auto'>Name:</h5><Field className='w-75' name="name" />
 					</Row>

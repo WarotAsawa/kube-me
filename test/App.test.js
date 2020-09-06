@@ -3,9 +3,10 @@ const { Builder, By, Key, until, Capabilities  } = require('selenium-webdriver')
 const assert = require('assert')
 
 const expectedDeployment = "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  replicas: 5\n  selector:\n    matchLabels:\n      app: kube-me\n  template:\n    metadata:\n      labels:\n        app: kube-me\n    spec:\n      containers:\n        - name: kube-me\n          image: \'asawakow/kube-me:latest\'\n          resources:\n            requests:\n              cpu: 128m\n              memory: 256Mi\n            limits:\n              cpu: 256m\n              memory: 512Mi\n          env:\n            - name: PORT-NO\n              value: \'3000\'\n            - name: IMAGE\n              value: KUBE-ME\n          ports:\n            - name: http-kubeme\n              containerPort: 3000\n              protocol: TCP";
-const expectedService = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  type: NodePort\n  selector:\n    app: kube-me\n  ports:\n    - name: http-kubeme\n      protocol: TCP\n      port: 3000\n      targetPort: 3000\n";
-
-const testHost = "192.168.1.98";
+const expectedService = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  type: NodePort\n  selector:\n    app: kube-me\n  ports:\n    - name: http-kubeme\n      protocol: TCP\n      port: 3000\n      targetPort: 3000";
+const expectedStatefulSet = "apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: ss-kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  serviceName: kube-me\n  replicas: 4\n  selector:\n    matchLabels:\n      app: kube-me\n  template:\n    metadata:\n      labels:\n        app: kube-me\n    spec:\n      containers:\n        - name: kube-me\n          image: 'asawakow/kube-me:latest'\n          resources:\n            requests:\n              cpu: 128m\n              memory: 128Mi\n            limits:\n              cpu: 256m\n              memory: 512Mi\n          env:\n            - name: stateful\n              value: 'yes'\n            - name: my-env\n              value: '3000'\n          ports:\n            - name: http-web\n              containerPort: 3000\n              protocol: TCP\n          volumeMounts:\n            - name: data\n              mountPath: /usr/share/nginx/html\n            - name: log\n              mountPath: /var/log\n  volumeClaimTemplates:\n    - metadata:\n        name: data\n      spec:\n        accessModes:\n          - ReadWriteOnce\n        storageClassName: my-storage-class\n        resources:\n          requests:\n            storage: 1Gi\n    - metadata:\n        name: log\n      spec:\n        accessModes:\n          - ReadWriteOnce\n        storageClassName: nimble-default-class\n        resources:\n          requests:\n            storage: 5Gi";
+const expectedHeadless = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  clusterIP: None\n  selector:\n    app: kube-me\n  ports:\n    - name: http-web\n      protocol: TCP\n      port: 3000\n      targetPort: 3000";
+const testHost = "gotham-ci.hpe.lab";
 
 describe('kube-me-stateless', function() {
 	this.timeout(30000)
@@ -16,110 +17,140 @@ describe('kube-me-stateless', function() {
 		.usingServer("http://"+testHost+":4444/wd/hub") 
 		.forBrowser('firefox')
 		.build();
-		//.withCapabilities(capabilities)
-		//.setChromeOptions(opts)
-		vars = {}
+		vars = {};
 	})
 	afterEach(async function() {
 		await driver.quit();
 	})
-	it('kube-me-stateless', async function() {
+	it('kube-me-stateless-test', async function() {
+		console.log("Connecting to http://"+testHost+":3000/");
 		await driver.get("http://"+testHost+":3000/");
-		console.log("Testing at http://"+testHost+":3000/");
-		//await driver.wait(function () {return driver.isElementPresent(webdriver.By.name("submitStateless"));}, 10000);
-		await driver.findElement(By.css(".container > .btn")).click()
+		console.log("Successfully connected http://"+testHost+":3000/");
+		await ClickComponent(driver,'css',".container > .btn");
 		console.log("linkText('STATELESS APPLICATION')).click()");
 		await driver.findElement(By.linkText("STATELESS APPLICATION")).click();
-		console.log("name('name')).click()");
-		await driver.findElement(By.name("name")).click();
-		console.log("name('name')).sendKeys('kube-me')");
-		await driver.findElement(By.name("name")).sendKeys("kube-me");
-		console.log("name('namespace')).click()");
-		await driver.findElement(By.name("namespace")).click();
-		console.log("name('namespace')).sendKeys('tiny-tenant')");
-		await driver.findElement(By.name("namespace")).sendKeys("tiny-tenant");
-		console.log("name('replicas')).click()");
-		await driver.findElement(By.name("replicas")).click();
-		console.log("name('replicas')).sendKeys('5')");
-		await driver.findElement(By.name("replicas")).sendKeys("5");
-		console.log("name('image')).click()");
-		await driver.findElement(By.name("image")).click();
-		console.log("name('image')).sendKeys('asawakow/kube-me:latest')");
-		await driver.findElement(By.name("image")).sendKeys("asawakow/kube-me:latest");
-		console.log("name('requestCpu')).click()");
-		await driver.findElement(By.name("requestCpu")).click();
-		console.log("name('requestCpu')).sendKeys('128m')");
-		await driver.findElement(By.name("requestCpu")).sendKeys("128m");
-		console.log("name('requestMemory')).click()");
-		await driver.findElement(By.name("requestMemory")).click();
-		console.log("name('requestMemory')).sendKeys('256Mi')");
-		await driver.findElement(By.name("requestMemory")).sendKeys("256Mi");
-		console.log("name('limitCpu')).click()");
-		await driver.findElement(By.name("limitCpu")).click();
-		console.log("name('limitCpu')).sendKeys('256m')");
-		await driver.findElement(By.name("limitCpu")).sendKeys("256m");
-		console.log("name('limitMemory')).click()");
-		await driver.findElement(By.name("limitMemory")).click();
-		console.log("name('limitMemory')).sendKeys('512Mi')");
-		await driver.findElement(By.name("limitMemory")).sendKeys("512Mi");
-		console.log("name('envs.0.name')).click()");
-		await driver.findElement(By.name("envs.0.name")).click();
-		console.log("name('envs.0.name')).sendKeys('PORT-NO')");
-		await driver.findElement(By.name("envs.0.name")).sendKeys("PORT-NO");
-		console.log("name('envs.0.value')).click()");
-		await driver.findElement(By.name("envs.0.value")).click();
-		console.log("name('envs.0.value')).sendKeys('3000')");
-		await driver.findElement(By.name("envs.0.value")).sendKeys("3000");
-		console.log("css('.fade:nth-child(1) div:nth-child(22) > .row > .btn')).click()");
-		await driver.findElement(By.css(".fade:nth-child(1) div:nth-child(22) > .row > .btn")).click();
-		console.log("name('envs.1.name')).click()");
-		await driver.findElement(By.name("envs.1.name")).click();
-		console.log("name('envs.1.name')).sendKeys('IMAGE')");
-		await driver.findElement(By.name("envs.1.name")).sendKeys("IMAGE");
-		console.log("name('envs.1.value')).click()");
-		await driver.findElement(By.name("envs.1.value")).click();
-		console.log("name('envs.1.value')).sendKeys('KUBE-ME')");
-		await driver.findElement(By.name("envs.1.value")).sendKeys("KUBE-ME");
-		console.log("css('.row:nth-child(3) > .btn-primary')).click()");
-		await driver.findElement(By.css(".row:nth-child(3) > .btn-primary")).click();
-		console.log("css('.row:nth-child(3) > .col-2 > .btn')).click()");
-		await driver.findElement(By.css(".row:nth-child(3) > .col-2 > .btn")).click();
-		console.log("css('.w-25:nth-child(3) > input')).click()");
-		await driver.findElement(By.css(".w-25:nth-child(3) > input")).click();
-		console.log("name('ports.0.name')).click()");
-		await driver.findElement(By.name("ports.0.name")).click();
-		console.log("name('ports.0.name')).sendKeys('http-kubeme')");
-		await driver.findElement(By.name("ports.0.name")).sendKeys("http-kubeme");
-		console.log("name('ports.0.number')).click()");
-		await driver.findElement(By.name("ports.0.number")).click();
-		console.log("name('ports.0.number')).sendKeys('3000')");
-		await driver.findElement(By.name("ports.0.number")).sendKeys("3000");
-		console.log("name('ports.0.protocol')).click()");
-		await driver.findElement(By.name("ports.0.protocol")).click();
-		console.log("name('ports.0.expose')).click()");
-		await driver.findElement(By.name("ports.0.expose")).click();
-		
-		console.log("name('submitStateless')).click()");
-		await driver.findElement(By.name("submitStateless")).click()
-		//Wait for Field to update
+		await KeyComponent(driver, 'name', "name", "kube-me");
+		await KeyComponent(driver, 'name', "namespace", "tiny-tenant");
+		await KeyComponent(driver, 'name', "replicas", "5");
+		await KeyComponent(driver, 'name', "image", "asawakow/kube-me:latest");
+		await KeyComponent(driver, 'name', "requestCpu", "128m");
+		await KeyComponent(driver, 'name', "requestMemory", "256Mi");
+		await KeyComponent(driver, 'name', "limitCpu", "256m");
+		await KeyComponent(driver, 'name', "limitMemory", "512Mi");
+		await KeyComponent(driver, 'name', "envs.0.name", "PORT-NO");
+		await KeyComponent(driver, 'name', "envs.0.value", "3000");
+		await ClickComponent(driver,'css','.fade:nth-child(1) div:nth-child(22) > .row > .btn');
+		await KeyComponent(driver, 'name', "envs.1.name", "IMAGE");
+		await KeyComponent(driver, 'name', "envs.1.value", "KUBE-ME");
+		await ClickComponent(driver,'css',".row:nth-child(3) > .btn-primary");
+		await ClickComponent(driver,'css',".row:nth-child(3) > .col-2 > .btn");
+		await ClickComponent(driver,'css',".w-25:nth-child(3) > input");
+		await KeyComponent(driver, 'name', "ports.0.name", "http-kubeme");
+		await KeyComponent(driver, 'name', "ports.0.number", "3000");
+		await ClickComponent(driver,'name',"ports.0.protocol");
+		await ClickComponent(driver,'name',"ports.0.expose");
+		await ClickComponent(driver,'name',"submitStateless");
+
 		console.log("Delay 3 sec to field to updated");
-		driver.sleep(3000);
+		await driver.sleep(3000);
 		//await sleep(3000);
 		console.log("Comparing Deployment YAML");
 		let deployYaml = await driver.findElement(By.css(".fade:nth-child(1) .col:nth-child(1) .col:nth-child(1) .card-text:nth-child(1)")).getText();
+		console.log("Deployment");
 		console.log(deployYaml);
+		console.log("Expected Deployment");
 		console.log(expectedDeployment);
-		assert(deployYaml == expectedDeployment)
+		
 		
 		console.log("Comparing Service YAML");
 		let serviceYaml = await driver.findElement(By.css(".fade:nth-child(1) .col:nth-child(2) .card-text:nth-child(1)")).getText();
+		console.log("Service");
 		console.log(serviceYaml);
-		console.log(expectedDeployment);
+		console.log("Expected Service");
+		console.log(expectedService);
+		console.log("Deployment Pass: ");
+		console.log(deployYaml==expectedDeployment);
+		console.log("Service Pass: ");
+		console.log(serviceYaml==expectedService);
+		assert(deployYaml == expectedDeployment)
 		assert(serviceYaml == expectedService)
+	})
+	it('kube-me-stateful-test', async function() {
+		console.log("Connecting to http://"+testHost+":3000/");
+		await driver.get("http://"+testHost+":3000/");
+		console.log("Successfully connected http://"+testHost+":3000/");
+		await ClickComponent(driver,'css',".container > .btn");
+		console.log("linkText('STATEFUL APPLICATION')).click()");
+		await driver.findElement(By.linkText("STATEFUL APPLICATION")).click();
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(1) > .w-75", "kube-me");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(3) > .w-75", "tiny-tenant");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(5) > .w-75", "4");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(8) > .w-75", "asawakow/kube-me:latest");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(12) > .w-75", "128m");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(14) > .w-75", "128Mi");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(17) > .w-75", "256m");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .my-1:nth-child(19) > .w-75", "512Mi");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .col-5:nth-child(1) > .w-75", "stateful");
+		await KeyComponent(driver, 'css', ".fade:nth-child(2) .col-5:nth-child(2) > .w-75", "yes");
+		await ClickComponent(driver,'css','.fade:nth-child(2) div:nth-child(22) > .row > .btn');
+		await KeyComponent(driver, 'name', "envs.1.name", "my-env");
+		await KeyComponent(driver, 'name', "envs.1.value", "3000");
+		await ClickComponent(driver,'css','div:nth-child(24) > .row > .btn');
+		await KeyComponent(driver, 'name', "volumeMounts.1.name", "log");
+		await KeyComponent(driver, 'name', "volumeMounts.1.mountPath", "/var/log");
+		await KeyComponent(driver, 'name', "volumeMounts.1.storageClassName", "nimble-default-class");
+		await KeyComponent(driver, 'name', "volumeMounts.1.size", "5Gi");
+		await KeyComponent(driver, 'css', "div:nth-child(27) .w-100", "http-web");
+		await KeyComponent(driver, 'css', "div:nth-child(27) .col:nth-child(2) > .row:nth-child(2)", "3000");
+		await ClickComponent(driver,'name',"submitStateful");
+
+		console.log("Delay 3 sec to field to updated");
+		await driver.sleep(3000);
+		//await sleep(3000);
+		console.log("Comparing StatefulSet YAML");
+		let statefulSetYaml = await driver.findElement(By.css(".fade:nth-child(2) .col:nth-child(1) .col:nth-child(1) .card-text:nth-child(1)")).getText();
+		console.log("StatefulSet");
+		console.log(statefulSetYaml);
+		console.log("Expected StatefulSet");
+		console.log(expectedStatefulSet);
 		
+		
+		console.log("Comparing Service YAML");
+		let headlessYaml = await driver.findElement(By.css(".fade:nth-child(2) .col:nth-child(2) .card-text:nth-child(1)")).getText();
+		console.log("Headless Service");
+		console.log(headlessYaml);
+		console.log("Expected Headless Service");
+		console.log(expectedHeadless);
+		console.log("StatefulSet Pass: ");
+		console.log(statefulSetYaml==expectedStatefulSet);
+		console.log("Headless Service Pass: ");
+		console.log(headlessYaml==expectedHeadless);
+		assert(statefulSetYaml == expectedStatefulSet)
+		assert(headlessYaml == expectedHeadless)
 	})
 })
-
+async function ClickComponent(driver, by, name, isLog=true) {
+	if (isLog) console.log("Clicking component "+by+" : "+name);
+	if (by == 'name') await driver.findElement(By.name(name)).click();
+	else if (by == 'css') await driver.findElement(By.css(name)).click();
+	else if (by == 'linkText') await driver.findElement(By.linkText(name)).click();
+}
+async function KeyComponent(driver, by, name, key, isLog=true) {
+	const debugMsg = "Component "+by+" "+name+"'s value: ";
+	let resultMsg = "";
+	let element;
+	if (isLog) console.log("Keying component "+by+" : "+name);
+	//Set ELement
+	if (by == 'name')  element = driver.findElement(By.name(name));
+	else if (by == 'css') element =  driver.findElement(By.css(name));
+	//Clear and SendKeys
+	await element.clear();
+	await element.sendKeys(key); 
+	if (isLog) {
+		resultMsg = await element.getAttribute("value");
+		console.log(debugMsg+resultMsg);
+	}
+}
 function sleep(ms) {
 	return new Promise((resolve) => {
 	  setTimeout(resolve, ms);
