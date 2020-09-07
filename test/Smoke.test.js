@@ -2,10 +2,6 @@
 const { Builder, By, Key, until, Capabilities  } = require('selenium-webdriver')
 const assert = require('assert')
 
-const expectedDeployment = "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  replicas: 5\n  selector:\n    matchLabels:\n      app: kube-me\n  template:\n    metadata:\n      labels:\n        app: kube-me\n    spec:\n      containers:\n        - name: kube-me\n          image: \'asawakow/kube-me:latest\'\n          resources:\n            requests:\n              cpu: 128m\n              memory: 256Mi\n            limits:\n              cpu: 256m\n              memory: 512Mi\n          env:\n            - name: PORT-NO\n              value: \'3000\'\n            - name: IMAGE\n              value: KUBE-ME\n          ports:\n            - name: http-kubeme\n              containerPort: 3000\n              protocol: TCP";
-const expectedService = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  type: NodePort\n  selector:\n    app: kube-me\n  ports:\n    - name: http-kubeme\n      protocol: TCP\n      port: 3000\n      targetPort: 3000";
-const expectedStatefulSet = "apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: ss-kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  serviceName: kube-me\n  replicas: 4\n  selector:\n    matchLabels:\n      app: kube-me\n  template:\n    metadata:\n      labels:\n        app: kube-me\n    spec:\n      containers:\n        - name: kube-me\n          image: 'asawakow/kube-me:latest'\n          resources:\n            requests:\n              cpu: 128m\n              memory: 128Mi\n            limits:\n              cpu: 256m\n              memory: 512Mi\n          env:\n            - name: stateful\n              value: 'yes'\n            - name: my-env\n              value: '3000'\n          ports:\n            - name: http-web\n              containerPort: 3000\n              protocol: TCP\n          volumeMounts:\n            - name: data\n              mountPath: /usr/share/nginx/html\n            - name: log\n              mountPath: /var/log\n  volumeClaimTemplates:\n    - metadata:\n        name: data\n      spec:\n        accessModes:\n          - ReadWriteOnce\n        storageClassName: my-storage-class\n        resources:\n          requests:\n            storage: 1Gi\n    - metadata:\n        name: log\n      spec:\n        accessModes:\n          - ReadWriteOnce\n        storageClassName: nimble-default-class\n        resources:\n          requests:\n            storage: 5Gi";
-const expectedHeadless = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  clusterIP: None\n  selector:\n    app: kube-me\n  ports:\n    - name: http-web\n      protocol: TCP\n      port: 3000\n      targetPort: 3000";
 //Read .env file
 const dotenv = require('dotenv');
 dotenv.config();
@@ -60,31 +56,6 @@ describe('kube-me-prebuild', function() {
 		await KeyComponent(driver, 'name', "ports.0.number", "3000");
 		await ClickComponent(driver,'name',"ports.0.protocol");
 		await ClickComponent(driver,'name',"ports.0.expose");
-		await ClickComponent(driver,'name',"submitStateless");
-
-		console.log("Delay 3 sec to field to updated");
-		await driver.sleep(3000);
-		//await sleep(3000);
-		console.log("Comparing Deployment YAML");
-		let deployYaml = await driver.findElement(By.css(".fade:nth-child(1) .col:nth-child(1) .col:nth-child(1) .card-text:nth-child(1)")).getText();
-		console.log("Deployment");
-		console.log(deployYaml);
-		console.log("Expected Deployment");
-		console.log(expectedDeployment);
-		
-		
-		console.log("Comparing Service YAML");
-		let serviceYaml = await driver.findElement(By.css(".fade:nth-child(1) .col:nth-child(2) .card-text:nth-child(1)")).getText();
-		console.log("Service");
-		console.log(serviceYaml);
-		console.log("Expected Service");
-		console.log(expectedService);
-		console.log("Deployment Pass: ");
-		console.log(deployYaml==expectedDeployment);
-		console.log("Service Pass: ");
-		console.log(serviceYaml==expectedService);
-		assert(deployYaml == expectedDeployment)
-		assert(serviceYaml == expectedService)
 	})
 	it('kube-me-stateful-test', async function() {
 		console.log("Connecting to " + testURL);
@@ -113,31 +84,6 @@ describe('kube-me-prebuild', function() {
 		await KeyComponent(driver, 'name', "volumeMounts.1.size", "5Gi");
 		await KeyComponent(driver, 'css', "div:nth-child(27) .w-100", "http-web");
 		await KeyComponent(driver, 'css', "div:nth-child(27) .col:nth-child(2) > .row:nth-child(2)", "3000");
-		await ClickComponent(driver,'name',"submitStateful");
-
-		console.log("Delay 3 sec to field to updated");
-		await driver.sleep(3000);
-		//await sleep(3000);
-		console.log("Comparing StatefulSet YAML");
-		let statefulSetYaml = await driver.findElement(By.css(".fade:nth-child(2) .col:nth-child(1) .col:nth-child(1) .card-text:nth-child(1)")).getText();
-		console.log("StatefulSet");
-		console.log(statefulSetYaml);
-		console.log("Expected StatefulSet");
-		console.log(expectedStatefulSet);
-		
-		
-		console.log("Comparing Service YAML");
-		let headlessYaml = await driver.findElement(By.css(".fade:nth-child(2) .col:nth-child(2) .card-text:nth-child(1)")).getText();
-		console.log("Headless Service");
-		console.log(headlessYaml);
-		console.log("Expected Headless Service");
-		console.log(expectedHeadless);
-		console.log("StatefulSet Pass: ");
-		console.log(statefulSetYaml==expectedStatefulSet);
-		console.log("Headless Service Pass: ");
-		console.log(headlessYaml==expectedHeadless);
-		assert(statefulSetYaml == expectedStatefulSet)
-		assert(headlessYaml == expectedHeadless)
 	})
 })
 async function ClickComponent(driver, by, name, isLog=true) {

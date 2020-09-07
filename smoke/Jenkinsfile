@@ -12,7 +12,7 @@ pipeline {
 	agent { label 'gotham-ci'}
 	parameters {
 		string(name: 'TEST_HOST', defaultValue: 'gotham-ci.hpe.lab', description: 'URL for docker testing')
-		string(name: 'TEST_PORT', defaultValue: '3000', description: 'Port for testing')
+		string(name: 'TEST_PORT', defaultValue: '3001', description: 'Port for testing')
 		string(name: 'BROWSER_HOST', defaultValue: "gotham-ci.hpe.lab", description: 'URL for Selenium Remote Web Driver')
 		string(name: 'BROWSER_PORT', defaultValue: '4444', description: 'Port for Selenium Remote Web Driver')
 		string(name: 'PROD_HOST', defaultValue: 'k8s-7.ezmeral.hpe.lab', description: 'URL for production endpoint testing')
@@ -42,7 +42,7 @@ pipeline {
 					retry(3) {
 						sleep(time: 10, unit: "SECONDS")
 						echo "Test web functionalities"
-						sh "docker exec -i smoke-tester npm test ./test/Smoke.smoke.js"
+						sh "docker exec -i smoke-tester npm test ./test/Smoke.test.js"
 					}
 					echo "Test Pass. Cleaning up containers"
 					sh "docker stop smoke-tester"
