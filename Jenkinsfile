@@ -50,7 +50,7 @@ pipeline {
 					retry(3) {
 						sleep(time: 10, unit: "SECONDS")
 						echo "Test web functionalities"
-						sh "docker exec -i smoke-tester -e \"TEST_HOST=${params.TEST_HOST}\" -e \"TEST_PORT=${params.TEST_PORT}\" -e \"BROWSER_HOST=${params.BROWSER_HOST}\" -e \"BROWSER_PORT=${params.BROWSER_PORT}\" npm test"
+						sh "docker exec -i tempweb -e \"TEST_HOST=${params.TEST_HOST}\" -e \"TEST_PORT=${params.TEST_PORT}\" -e \"BROWSER_HOST=${params.BROWSER_HOST}\" -e \"BROWSER_PORT=${params.BROWSER_PORT}\" npm test"
 					}
 					echo "Test Pass. Cleaning up containers"
 					sh "docker stop tempweb"
