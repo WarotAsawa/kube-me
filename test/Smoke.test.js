@@ -10,8 +10,8 @@ const expectedHeadless = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube
 const dotenv = require('dotenv');
 dotenv.config();
 //Set up envs
-const testHost = process.env.TEST_HOST;
-const testPort = process.env.TEST_PORT;
+const testHost = process.env.PROD_HOST;
+const testPort = process.env.PROD_PORT;
 const browserHost = process.env.BROWSER_HOST;
 const browserPort = process.env.BROWSER_PORT;
 //Set up URLs
