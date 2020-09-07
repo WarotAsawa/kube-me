@@ -6,7 +6,14 @@ const expectedDeployment = "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  
 const expectedService = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  type: NodePort\n  selector:\n    app: kube-me\n  ports:\n    - name: http-kubeme\n      protocol: TCP\n      port: 3000\n      targetPort: 3000";
 const expectedStatefulSet = "apiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: ss-kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  serviceName: kube-me\n  replicas: 4\n  selector:\n    matchLabels:\n      app: kube-me\n  template:\n    metadata:\n      labels:\n        app: kube-me\n    spec:\n      containers:\n        - name: kube-me\n          image: 'asawakow/kube-me:latest'\n          resources:\n            requests:\n              cpu: 128m\n              memory: 128Mi\n            limits:\n              cpu: 256m\n              memory: 512Mi\n          env:\n            - name: stateful\n              value: 'yes'\n            - name: my-env\n              value: '3000'\n          ports:\n            - name: http-web\n              containerPort: 3000\n              protocol: TCP\n          volumeMounts:\n            - name: data\n              mountPath: /usr/share/nginx/html\n            - name: log\n              mountPath: /var/log\n  volumeClaimTemplates:\n    - metadata:\n        name: data\n      spec:\n        accessModes:\n          - ReadWriteOnce\n        storageClassName: my-storage-class\n        resources:\n          requests:\n            storage: 1Gi\n    - metadata:\n        name: log\n      spec:\n        accessModes:\n          - ReadWriteOnce\n        storageClassName: nimble-default-class\n        resources:\n          requests:\n            storage: 5Gi";
 const expectedHeadless = "apiVersion: v1\nkind: Service\nmetadata:\n  name: kube-me\n  namespace: tiny-tenant\n  labels:\n    app: kube-me\nspec:\n  clusterIP: None\n  selector:\n    app: kube-me\n  ports:\n    - name: http-web\n      protocol: TCP\n      port: 3000\n      targetPort: 3000";
-const testHost = "gotham-ci.hpe.lab";
+
+const testHost = process.env.TEST_HOST;
+const testPort = process.env.TEST_PORT;
+const browserHost = process.env.BROWSER_HOST;
+const browserPort = process.env.BROWSER_PORT;
+
+const browserURL = "http://"+browserHost+":"+browserPort+"/wd/hub";
+const testURL = "http://"+testHost+":"+testPort+"/";
 
 describe('kube-me-stateless', function() {
 	this.timeout(30000)
@@ -14,7 +21,7 @@ describe('kube-me-stateless', function() {
 	let vars
 	beforeEach(async function() {
 		driver = await new Builder()
-		.usingServer("http://"+testHost+":4444/wd/hub") 
+		.usingServer(browserURL) 
 		.forBrowser('firefox')
 		.build();
 		vars = {};
@@ -23,9 +30,9 @@ describe('kube-me-stateless', function() {
 		await driver.quit();
 	})
 	it('kube-me-stateless-test', async function() {
-		console.log("Connecting to http://"+testHost+":3000/");
-		await driver.get("http://"+testHost+":3000/");
-		console.log("Successfully connected http://"+testHost+":3000/");
+		console.log("Connecting to " + testURL);
+		await driver.get(testURL);
+		console.log("Successfully connected " + testURL);
 		await ClickComponent(driver,'css',".container > .btn");
 		console.log("linkText('STATELESS APPLICATION')).click()");
 		await driver.findElement(By.linkText("STATELESS APPLICATION")).click();
@@ -76,9 +83,9 @@ describe('kube-me-stateless', function() {
 		assert(serviceYaml == expectedService)
 	})
 	it('kube-me-stateful-test', async function() {
-		console.log("Connecting to http://"+testHost+":3000/");
-		await driver.get("http://"+testHost+":3000/");
-		console.log("Successfully connected http://"+testHost+":3000/");
+		console.log("Connecting to " + testURL);
+		await driver.get(testURL);
+		console.log("Successfully connected " + testURL);
 		await ClickComponent(driver,'css',".container > .btn");
 		console.log("linkText('STATEFUL APPLICATION')).click()");
 		await driver.findElement(By.linkText("STATEFUL APPLICATION")).click();

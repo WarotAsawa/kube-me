@@ -19,7 +19,7 @@ pipeline {
 		string(name: 'PROD_PORT', defaultValue: '30555', description: 'Port for production')
 	}
 	stages {
-		stage('Prepare Test') {
+		stage('Preparing Smoke Test') {
 			steps {
 				echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
 				dir('/root/kube-me') {
@@ -30,70 +30,23 @@ pipeline {
 				}
 			}
 		}
-		stage('Build Test') {
-			steps {
-				dir('/root/kube-me') {
-					echo "Building temp docker image"
-					sh "docker build -t temp-kube-me:dev ."
-				}
-			}
-		}
-		stage('Run Test') {
+		stage('Running Smoke Test') {
 			steps {
 				dir('/root/kube-me') {
 					ehco "Clean up leftover container"
-					sh "docker stop tempweb || true"
+					sh "docker stop smoke-tester || true"
 					echo "Running temp docker image with port ${params.TEST_PORT}"
-					sh "docker run --name tempweb --rm -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev"
+					sh "docker run --name smoke-tester --rm -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev"
 					echo "Waiting for NodeJS Service to be Ready"
 					sleep(time: 30, unit: "SECONDS")
 					retry(3) {
 						sleep(time: 10, unit: "SECONDS")
 						echo "Test web functionalities"
-						sh "docker exec -i smoke-tester -e \"TEST_HOST=${params.TEST_HOST}\" -e \"TEST_PORT=${params.TEST_PORT}\" -e \"BROWSER_HOST=${params.BROWSER_HOST}\" -e \"BROWSER_PORT=${params.BROWSER_PORT}\" npm test"
+						sh "docker exec -i smoke-tester -e \"TEST_HOST=${params.PROD_HOST}\" -e \"TEST_PORT=${params.PROD_PORT}\" -e \"BROWSER_HOST=${params.BROWSER_HOST}\" -e \"BROWSER_PORT=${params.BROWSER_PORT}\" npm test"
 					}
 					echo "Test Pass. Cleaning up containers"
-					sh "docker stop tempweb"
+					sh "docker stop smoke-tester"
 				}
-			}
-		}
-		stage('Build Prod') {
-			steps {
-				dir('/root/kube-me') {
-					echo "Merge to master and push"
-					sh "git checkout master"
-					sh "git merge dev"
-					sh "git push"
-					echo "Checkout git back to dev branch"
-					sh "git checkout dev"
-					echo "Building production docker image"
-					sh "docker build -t asawakow/kube-me:dev ."
-					echo "Push Image to docker.hub"
-					sh "docker push asawakow/kube-me:dev"
-				}
-			}
-		}
-		stage('Deploy Prod on k8s') {
-			steps {
-				dir('/root/kube-me/src/kubectl') {
-					echo "Sleep 15s for docker hub to ready"
-					sleep(time: 15, unit: "SECONDS")
-					echo "Re-deployging Web-App"
-					sh "kubectl delete -f deploy-kube-me.yaml || true"
-					sh "kubectl apply -f deploy-kube-me.yaml"
-					echo "Applying Services"
-					sh "kubectl apply -f svc-kube-me.yaml"
-				}
-			}
-		}
-		stage('Verify deployment') {
-			steps {
-				retry(3) {
-					sleep(time: 15, unit: "SECONDS")
-					echo "Test web connectivity"
-					sh "curl -I http://${params.PROD_HOST}:${params.PROD_PORT}"
-				}
-				echo "Test Pass. All Done"
 			}
 		}
 	}
