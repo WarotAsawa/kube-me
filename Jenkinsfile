@@ -41,7 +41,7 @@ pipeline {
 		stage('Run Test') {
 			steps {
 				dir('/root/kube-me') {
-					ehco "Clean up leftover container"
+					echo "Clean up leftover container"
 					sh "docker stop tempweb || true"
 					echo "Running temp docker image with port ${params.TEST_PORT}"
 					sh "docker run --name tempweb --rm -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev"
