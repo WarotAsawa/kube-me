@@ -42,7 +42,7 @@ pipeline {
 					retry(3) {
 						sleep(time: 10, unit: "SECONDS")
 						echo "Test web functionalities"
-						sh "docker exec -i smoke-tester npm test ./test/Smoke.test.js"
+						sh "docker exec -i smoke-tester npm test ./test/Smoke.smoke.js"
 					}
 					echo "Test Pass. Cleaning up containers"
 					sh "docker stop smoke-tester"
