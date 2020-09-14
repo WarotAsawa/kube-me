@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    node {
+      label 'gotham-ci'
+    }
+
+  }
   stages {
     stage('Prepare Test') {
       steps {
