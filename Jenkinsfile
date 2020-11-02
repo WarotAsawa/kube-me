@@ -3,7 +3,6 @@ pipeline {
     node {
       label 'gotham-ci'
     }
-
   }
   stages {
     stage('Prepare Test') {
@@ -15,20 +14,16 @@ pipeline {
           echo 'Pull latest code from WarotAsawa/kube-me Branch: dev'
           sh 'git pull'
         }
-
       }
     }
-
     stage('Build Test') {
       steps {
         dir(path: '/root/kube-me') {
           echo 'Building temp docker image'
           sh 'docker build -t temp-kube-me:dev .'
         }
-
       }
     }
-
     stage('Run Test') {
       steps {
         dir(path: '/root/kube-me') {
@@ -43,14 +38,11 @@ pipeline {
             echo 'Test web functionalities'
             sh 'docker exec -i tempweb npm test ./test/App.test.js'
           }
-
           echo 'Test Pass. Cleaning up containers'
           sh 'docker stop tempweb'
         }
-
       }
     }
-
     stage('Build Prod') {
       steps {
         dir(path: '/root/kube-me') {
@@ -65,10 +57,8 @@ pipeline {
           echo 'Push Image to docker.hub'
           sh 'docker push asawakow/kube-me:dev'
         }
-
       }
     }
-
     stage('Deploy Prod on k8s') {
       steps {
         dir(path: '/root/kube-me/src/kubectl') {
@@ -83,7 +73,6 @@ pipeline {
 
       }
     }
-
     stage('Verify deployment') {
       steps {
         retry(count: 3) {
@@ -95,14 +84,13 @@ pipeline {
         echo 'Test Pass. All Done'
       }
     }
-
   }
   parameters {
     string(name: 'TEST_HOST', defaultValue: 'gotham-ci.hpe.lab', description: 'URL for docker testing')
     string(name: 'TEST_PORT', defaultValue: '3000', description: 'Port for testing')
     string(name: 'BROWSER_HOST', defaultValue: 'gotham-ci.hpe.lab', description: 'URL for Selenium Remote Web Driver')
     string(name: 'BROWSER_PORT', defaultValue: '4444', description: 'Port for Selenium Remote Web Driver')
-    string(name: 'PROD_HOST', defaultValue: 'k8s-7.ezmeral.hpe.lab', description: 'URL for production endpoint testing')
+    string(name: 'PROD_HOST', defaultValue: 'ez-worker01.hpe.lab', description: 'URL for production endpoint testing')
     string(name: 'PROD_PORT', defaultValue: '30555', description: 'Port for production')
   }
 }
