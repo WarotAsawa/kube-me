@@ -40,7 +40,7 @@ Since **KUBE-ME** is a NodeJS Application, so you can use this command to run.
 
 ## Getting your .yaml file
 
-Open KUBE-ME and click on START KUBING. You can select either Stateless Application or Stateful Application. Here is the differences between two application types:
+ Open KUBE-ME and click on START KUBING. You can select either Stateless Application or Stateful Application. Here is the differences between two application types:
 
  1. **Stateless Application**: Provides **Deployment** and **Service** in yaml format
  2. **Stateful Application**: Provides **StatefulSet** and **Headless** Service in yaml format
