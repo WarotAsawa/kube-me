@@ -30,7 +30,7 @@ pipeline {
           echo 'Clean up leftover container'
           sh 'docker stop tempweb || true'
           echo "Running temp docker image with port ${params.TEST_PORT}"
-          sh "docker run --name tempweb --rm -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev"
+          sh "docker run --name tempweb --rm -d -p ${params.TEST_PORT}:3000 temp-kube-me:dev -e TEST_HOST=${params.TEST_HOST} -e TEST_PORT=${params.TEST_PORT}  -e BROWSER_HOST=${params.BROWSER_HOST} -e BROWSER_PORT=${params.BROWSER_PORT}"
           echo 'Waiting for NodeJS Service to be Ready'
           sleep(time: 30, unit: 'SECONDS')
           retry(count: 3) {
