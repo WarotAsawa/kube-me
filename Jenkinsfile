@@ -90,7 +90,7 @@ pipeline {
     string(name: 'TEST_PORT', defaultValue: '3000', description: 'Port for testing')
     string(name: 'BROWSER_HOST', defaultValue: 'gotham-ci.hpe.lab', description: 'URL for Selenium Remote Web Driver')
     string(name: 'BROWSER_PORT', defaultValue: '4444', description: 'Port for Selenium Remote Web Driver')
-    string(name: 'PROD_HOST', defaultValue: 'kube-me.ezmeral.hpe.lab', description: 'URL for production endpoint testing')
-    string(name: 'PROD_PORT', defaultValue: '30555', description: 'Port for production')
+    string(name: 'PROD_HOST', defaultValue: 'kube-me-ci.ezmeral.hpe.lab', description: 'URL for production endpoint testing')
+    string(name: 'PROD_PORT', defaultValue: '80', description: 'Port for production')
   }
 }
